@@ -23,7 +23,7 @@ wav_yaz("merhaba.wav", Seslen().tum("Merhaba! Yarın bize gelecek misiniz?", ses
 Her cümlenin duygusu ayrı seçildi. Metin olduğu gibi verildi: saat, sayı ve kısaltmalar paketin içinde okunur hâle gelir.
 
 **Ayşe** · olgun kadın · nötr → merak → nötr
-> Merhaba, ben Ayşe. Size nasıl yardımcı olabilirim? Randevunuz yarın saat 10:30'da.
+> Hoş geldiniz, ben Ayşe. Size nasıl yardımcı olabilirim? Randevunuz yarın saat 10:30'da.
 
 <audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/ayse.wav"></audio>
 
@@ -32,7 +32,7 @@ Her cümlenin duygusu ayrı seçildi. Metin olduğu gibi verildi: saat, sayı ve
 
 <audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/zeynep.wav"></audio>
 
-**Emre** · genç erkek · uyarı
+**Emre** · genç erkek · uyarı → nötr
 > Dikkat edin, yol çok kaygan! Lütfen yavaş sürün.
 
 <audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/emre.wav"></audio>
