@@ -15,5 +15,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+      # kardeş paketler GitHub'dan: PyPI'da henüz yoklarken de, sonra da en son sürümle sınanır
+      - run: pip install "turkce-normalize @ git+https://github.com/seslen-tr/turkce-normalize" "turkce-vurgu @ git+https://github.com/seslen-tr/turkce-vurgu"
       - run: pip install -e . pytest
       - run: pytest -q
