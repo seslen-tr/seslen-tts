@@ -1,0 +1,69 @@
+---
+language: tr
+license: cc-by-sa-4.0
+library_name: onnx
+pipeline_tag: text-to-speech
+tags: [turkish, tts, text-to-speech, styletts2, onnx, cpu, emotion]
+---
+
+# Seslen TTS — açık Türkçe ses modeli
+
+> **English:** Turkish text-to-speech that runs on CPU with ONNX Runtime only (no PyTorch): 6 voices × 9 emotions,
+> correct Turkish lexical stress and question intonation. StyleTTS2 student distilled from VoxCPM2-generated data
+> (designed voices, not real people). Use with the [seslen-tts](https://github.com/seslen-tr/seslen-tts) Python package.
+
+```python
+# pip install "seslen-tts[hepsi]"
+from seslen_tts import Seslen, wav_yaz
+wav_yaz("merhaba.wav", Seslen().tum("Merhaba! Yarın bize gelecek misiniz?", ses="zeynep"))
+```
+
+## Dosyalar
+
+| Dosya | İçerik |
+|---|---|
+| `metin.onnx` (78 MB) | metin kodlayıcı + Türkçe PL-BERT + süre tahmini: işaretler (1, L) + stil (1, 256) → d, t_en, süre |
+| `ses.onnx` (247 MB) | çözücü (iSTFTNet): hizalanmış özellikler + stil + perde/tonlama + soru ezgisi → 24 kHz dalga |
+| `stiller.npz` | 6 ses × 9 duygu stil vektörü (256 boyut) |
+| `sesler.json`, `semboller.json` | ses bilgileri; okunuş karakteri → işaret numarası |
+| `ornekler/*.wav` | her sesten bir örnek |
+
+## Sesler ve ölçümler
+
+| Ses | Kim | UTMOS |
+|---|---|---|
+| ayse | olgun kadın, güven veren | 4,04 |
+| zeynep | genç kız, ince, canlı | 3,95 |
+| koca | iri kalın dev (çizgi karakter) | 3,90 |
+| fatma | yaşlı kadın, şefkatli nine | 3,53 |
+| emre | genç erkek, enerjik | 2,93 |
+| hasan | yaşlı erkek, bilge dede | 2,78 |
+
+Duygular: nötr, neşeli, heyecan, uyarı, merak, özür, üzgün, kızgın, fısıltı.
+
+- Anlaşılırlık (Whisper medium): %100.
+- Hız (i7-12700H, 6 iş parçacığı): gerçek zaman oranı ≈ 0,2–0,4.
+
+## Eğitim
+
+| Bileşen | Kaynak |
+|---|---|
+| Mimari | StyleTTS2 (iSTFTNet), LJSpeech ağırlığından başlatıldı |
+| Ses ve duygu verisi | VoxCPM2 ile üretildi; sesler tariften tasarlandı, gerçek kişi değil; her kayıt Whisper kapısından geçti |
+| Okunuş | turkce-vurgu (vurgu işaretli IPA) |
+| Dil modeli | Türkçe PL-BERT ([seslen-tr/turkce-plbert](https://huggingface.co/seslen-tr/turkce-plbert)) |
+| Donanım | tek RTX 4090 |
+
+## Sınırlılıklar
+
+- **Ses klonlama yok.** Bilerek böyle: yalnız hazır sesler var.
+- Yalnız Türkçe; yabancı sözcükler Türkçe okunuşla okunur.
+- Duyguların belirginliği sese göre değişir.
+
+## Lisans ve kullanım koşulları
+
+- **Ağırlıklar ve sesler:** CC BY-SA 4.0 (Türkçe PL-BERT'in Vikipedi kaynaklı lisansı). Öğretmen VoxCPM2
+  Apache-2.0; StyleTTS2 MIT. Paket kodu: MIT.
+- **Kullanım koşulları:**
+  - Üretilen sesin yapay zekâ sesi olduğu dinleyiciye belirtilmelidir.
+  - Gerçek bir kişiyi taklit etmek, dolandırıcılık ve dezenformasyon için kullanmak yasaktır.

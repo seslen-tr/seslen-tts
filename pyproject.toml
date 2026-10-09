@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seslen-tts"
+version = "0.1.0"
+description = "İşlemcide çalışan, duygulu, vurguyu bilen açık Türkçe ses modeli (TTS): PyTorch'suz, yalnız ONNX Runtime"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Mehmet Veysel Delibaş" }]
+requires-python = ">=3.9"
+keywords = ["turkish", "tts", "text-to-speech", "speech-synthesis", "onnx", "styletts2", "türkçe", "ses"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Natural Language :: Turkish",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy",
+    "onnxruntime>=1.16",
+    "huggingface_hub>=0.20",
+    "turkce-vurgu[tam]>=0.1",
+]
+
+[project.optional-dependencies]
+duygu = ["turkce-duygu[model]>=0.1"]
+uslup = ["turkce-uslup[bert]>=0.1"]
+hepsi = ["turkce-duygu[model]>=0.1", "turkce-uslup[bert]>=0.1"]
+
+[project.scripts]
+seslen-tts = "seslen_tts.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/seslen-tr/seslen-tts"
+Source = "https://github.com/seslen-tr/seslen-tts"
+Issues = "https://github.com/seslen-tr/seslen-tts/issues"
+Model = "https://huggingface.co/seslen-tr/seslen-tts"
+
+[tool.setuptools.packages.find]
+include = ["seslen_tts*"]
