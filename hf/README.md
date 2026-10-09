@@ -18,6 +18,40 @@ from seslen_tts import Seslen, wav_yaz
 wav_yaz("merhaba.wav", Seslen().tum("Merhaba! Yarın bize gelecek misiniz?", ses="zeynep"))
 ```
 
+## Dinleyin
+
+Her cümlenin duygusu ayrı seçildi. Metin olduğu gibi verildi: saat, sayı ve kısaltmalar paketin içinde okunur hâle gelir.
+
+**Ayşe** · olgun kadın · nötr → merak → nötr
+> Merhaba, ben Ayşe. Size nasıl yardımcı olabilirim? Randevunuz yarın saat 10:30'da.
+
+<audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/ayse.wav"></audio>
+
+**Zeynep** · genç kız · heyecan → neşeli → merak
+> Harika bir haberim var! Sınavı geçtim! Akşam bize gelecek misin?
+
+<audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/zeynep.wav"></audio>
+
+**Emre** · genç erkek · uyarı
+> Dikkat edin, yol çok kaygan! Lütfen yavaş sürün.
+
+<audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/emre.wav"></audio>
+
+**Fatma** · nine · masal üslubu (otomatik)
+> Bir varmış, bir yokmuş. Evvel zaman içinde, küçük bir köyde meraklı bir kız yaşarmış.
+
+<audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/fatma.wav"></audio>
+
+**Hasan** · dede · nötr
+> Evladım, acele etme. Her işin bir vakti vardır.
+
+<audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/hasan.wav"></audio>
+
+**Koca** · iri dev (çizgi karakter) · merak → kızgın
+> Kim var orada? Benim ormanımda ne arıyorsun?
+
+<audio controls src="https://huggingface.co/seslen-tr/seslen-tts/resolve/main/ornekler/koca.wav"></audio>
+
 ## Dosyalar
 
 | Dosya | İçerik |
