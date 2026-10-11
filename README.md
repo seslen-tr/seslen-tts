@@ -36,10 +36,26 @@ seslen-tts --sesler
 
 ```
 pip install seslen-tts               # temel: sesler, vurgu, soru ezgisi
-pip install "seslen-tts[hepsi]"      # + otomatik duygu ve üslup
+pip install "seslen-tts[duygu]"      # + otomatik duygu (turkce-duygu)
+pip install "seslen-tts[uslup]"      # + otomatik üslup (turkce-uslup)
+pip install "seslen-tts[hepsi]"      # ikisi birden
+pip install git+https://github.com/seslen-tr/seslen-tts   # en son kaynak, GitHub'dan
 ```
 
-Python 3.9+, Windows / Linux / macOS. Model `SESLEN_TTS_MODEL` ortam değişkeniyle yerel bir klasörden de okunur.
+Python 3.9+, Windows / Linux / macOS. Bağımlılıklar: `numpy`, `onnxruntime`, `huggingface_hub`, `turkce-vurgu[tam]`
+(o da metni [turkce-normalize](https://github.com/seslen-tr/turkce-normalize) ile hazırlar).
+
+### Model dosyaları
+
+Model beş dosyadır: `metin.onnx`, `ses.onnx`, `stiller.npz`, `sesler.json`, `semboller.json`. Şu sırayla aranır:
+
+1. `Seslen(klasor="...")` ile verilen klasör,
+2. `SESLEN_TTS_MODEL` ortam değişkenindeki klasör,
+3. Hugging Face deposu (varsayılan `seslen-tr/seslen-tts`, `SESLEN_TTS_HF` ile değişir): ilk kullanımda iner,
+   önbellekte kalır. `SESLEN_TTS_INDIRME=0` indirmeyi kapatır.
+
+Windows'ta enerji kısıtını kaldırma `SESLEN_TTS_SUREC=0` ile kapatılır. İş parçacığı sayısı
+`Seslen(is_parcacigi=4)` ile verilir (varsayılan: çekirdek sayısı, en çok 6).
 
 ## Sesler
 
@@ -66,7 +82,24 @@ s.tum(metin, ses="hasan", hiz=0.9, perde=1.05) # hız ve ses perdesi
 s.tum(metin, ses="zeynep", ton="neseli", yogunluk=0.6)   # duygu şiddeti (0-1, 1 = tam ton)
 ```
 
+- `ton`: `"otomatik"` ya da `notr`, `neseli`, `heyecan`, `uyari`, `merak`, `ozur`, `uzgun`, `kizgin`, `fisilti`
+  (`seslen_tts.TONLAR`). Bir sesin tonları: `s.tonlar("zeynep")`; sesler ve açıklamaları: `s.sesler`.
+- `uslup`: `"otomatik"` ya da `haber`, `bilgi`, `talimat`, `deneme`, `anlati`, `masal`, `sohbet`. Üslup hızı,
+  ezgi genişliğini ve duraklamaları belirler; `hiz` verilirse üslubun hızını ezer.
+- turkce-duygu kurulu değilse her cümle nötr, turkce-uslup kurulu değilse üslup düz okunur.
+- `wav_yaz(yol, dalga)` 16 bit tek kanal 24 kHz WAV yazar (standart `wave` modülüyle; ses tepesi 0,9'a ölçeklenir).
+
 Alt düzey: `s.model.konus(cumle, s.model.stil("ayse", "merak"))` tek cümleyi seslendirir.
+
+### Komut satırı
+
+```
+seslen-tts "metin" [-s SES] [-t TON] [-u USLUP] [--hiz 1.1] [--perde 1.0] [-o cikti.wav]
+seslen-tts --sesler                  # sesleri ve tonlarını listele
+echo "Merhaba!" | seslen-tts -o merhaba.wav     # metin verilmezse standart girdiden
+```
+
+Varsayılanlar: ses `zeynep`, ton ve üslup `otomatik`, çıktı `seslen.wav`. `python -m seslen_tts` aynı işi yapar.
 
 ## Ölçümler
 
@@ -103,6 +136,21 @@ aktarıldı; aktarımın sesi değiştirmediği sınandı (log-mel farkı, model
   - Gerçek bir kişiyi taklit etmek, dolandırıcılık ve dezenformasyon için kullanmak yasaktır.
 
 Ticari ürün sesleri, özel ses tasarımı, stüdyo arayüzü ve kurum içi kurulum: Seslen ([iletişim](https://github.com/seslen-tr)).
+
+## Düzen ve testler
+
+| Dosya | İçerik |
+|---|---|
+| `seslen_tts/seslen.py` | `Seslen`: cümlelere bölme, otomatik duygu ve üslup, `seslendir` / `tum`, `wav_yaz` |
+| `seslen_tts/model.py` | `SesModeli`: ONNX oturumları, model klasörünü bulma/indirme, soru ezgisi, hizalama |
+| `seslen_tts/__main__.py` | komut satırı (`seslen-tts`) |
+| `hf/README.md`, `hf/yukle.py` | Hugging Face model kartı ve yükleme betiği (varsayılan gizli depo) |
+| `tests/test_model.py` | soru ezgisi, hizalama, cümle bölme; model varsa uçtan uca seslendirme |
+
+```
+pytest -q                            # modelsiz testler
+SESLEN_TTS_MODEL=<model klasörü> pytest -q   # + seslendirme testi
+```
 
 ## Kardeş projeler
 

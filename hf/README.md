@@ -62,6 +62,9 @@ Her cümlenin duygusu ayrı seçildi. Metin olduğu gibi verildi: saat, sayı ve
 | `sesler.json`, `semboller.json` | ses bilgileri; okunuş karakteri → işaret numarası |
 | `ornekler/*.wav` | her sesten bir örnek |
 
+Paket ilk kullanımda yalnız ilk beş dosyayı indirir (`ornekler/` inmez). İnternetsiz kurulum için dosyaları bir
+klasöre koyup `SESLEN_TTS_MODEL` ortam değişkeniyle ya da `Seslen(klasor="...")` ile gösterin.
+
 ## Sesler ve ölçümler
 
 | Ses | Kim | UTMOS |
