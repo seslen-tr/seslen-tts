@@ -1,5 +1,14 @@
 # Değişiklikler
 
+## 0.2.0 — yeni model
+
+- Model yenilendi (Seslen t10): sesler yeni öğretmen verisiyle ince ayarlandı; her eğitim kaydı otomatik okunuş
+  denetiminden (Türkçe wav2vec2 CTC + sözcük başına GOP) geçti. Ses renkleri değişti. Model dosyalarının adı ve
+  biçimi aynı; 0.1.0 paketi de yeni modelle çalışır.
+- Kısa ünlem ya da cümle sonrakine virgülle bağlanır (`akici`): tek başına "Dikkat!" ya da "Merhaba!" okunurken
+  sona uydurma hece ekleniyordu.
+- Noktalı virgülde en az 200 ms duraklama (önceden virgülden ayırt edilmiyordu).
+
 ## 0.1.0 — ilk açık sürüm
 
 - 6 ses × 9 duygu, PyTorch'suz (ONNX Runtime) çıkarım, soru ezgisi, otomatik duygu ve üslup (isteğe bağlı).

@@ -69,16 +69,16 @@ klasöre koyup `SESLEN_TTS_MODEL` ortam değişkeniyle ya da `Seslen(klasor="...
 
 | Ses | Kim | UTMOS |
 |---|---|---|
-| ayse | olgun kadın, güven veren | 4,04 |
-| zeynep | genç kız, ince, canlı | 3,95 |
-| koca | iri kalın dev (çizgi karakter) | 3,90 |
-| fatma | yaşlı kadın, şefkatli nine | 3,53 |
-| emre | genç erkek, enerjik | 2,93 |
-| hasan | yaşlı erkek, bilge dede | 2,78 |
+| ayse | olgun kadın, güven veren | 3,89 |
+| koca | iri kalın dev (çizgi karakter) | 3,89 |
+| hasan | yaşlı erkek, bilge dede | 3,26 |
+| zeynep | genç kız, ince, canlı | 3,25 |
+| emre | genç erkek, enerjik | 2,87 |
+| fatma | yaşlı kadın, şefkatli nine | 2,38 |
 
 Duygular: nötr, neşeli, heyecan, uyarı, merak, özür, üzgün, kızgın, fısıltı.
 
-- Anlaşılırlık (Whisper medium): %100.
+- Okunuş denetimi (Türkçe wav2vec2 CTC, 6 ses × 14 cümle): 84 cümlede 1 sözcük hatası (Hasan: "aradığın" → "aradığım").
 - Hız (i7-12700H, 6 iş parçacığı): gerçek zaman oranı ≈ 0,2–0,4.
 
 ## Eğitim
@@ -86,10 +86,10 @@ Duygular: nötr, neşeli, heyecan, uyarı, merak, özür, üzgün, kızgın, fı
 | Bileşen | Kaynak |
 |---|---|
 | Mimari | StyleTTS2 (iSTFTNet), LJSpeech ağırlığından başlatıldı |
-| Ses ve duygu verisi | VoxCPM2 ile üretildi; sesler tariften tasarlandı, gerçek kişi değil; her kayıt Whisper kapısından geçti |
+| Ses ve duygu verisi | VoxCPM2 ile üretildi; sesler tariften tasarlandı, gerçek kişi değil; her kayıt otomatik okunuş denetiminden (Türkçe wav2vec2 CTC + sözcük başına GOP) geçti |
 | Okunuş | turkce-vurgu (vurgu işaretli IPA) |
 | Dil modeli | Türkçe PL-BERT ([seslen-tr/turkce-plbert](https://huggingface.co/seslen-tr/turkce-plbert)) |
-| Donanım | tek RTX 4090 |
+| Donanım | tek RTX 4090; son ince ayar tek A100 |
 
 ## Sınırlılıklar
 

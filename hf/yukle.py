@@ -39,7 +39,7 @@ def main() -> None:
         shutil.copy(Path(__file__).with_name("README.md"), Path(t) / "README.md")
         api = HfApi()
         api.create_repo(DEPO, private=not a.acik, exist_ok=True)
-        api.upload_folder(folder_path=t, repo_id=DEPO, commit_message="model, örnekler ve model kartı")
+        api.upload_folder(folder_path=t, repo_id=DEPO, commit_message=os.environ.get("SESLEN_TTS_MESAJ", "model, örnekler ve model kartı"))
     print(f"yüklendi: https://huggingface.co/{DEPO} ({'açık' if a.acik else 'gizli'}; sesler: {', '.join(sorted(sesler))})")
 
 

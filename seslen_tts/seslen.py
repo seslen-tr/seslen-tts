@@ -31,7 +31,34 @@ class Parca:
     bilgi: dict = field(default_factory=dict)
 
 
+# Tek başına okunan 1-2 sözcüklük cümleye model sonda uydurma hece ekliyor ("Dikkat!" → "dikkatsınız"); sonraki
+# cümleye virgülle bağlanınca temiz okunuyor ve turkce-duygu tonu da doğru buluyor ("Dikkat, bu işlem…" → uyarı).
+_KISA = re.compile(r"(?:^|(?<=[.!?…]\s))((?:[^\s.!?…;]+\s)?([^\s.!?…;]+))([.!]+)\s+(\w)(?=(\w?))")
+_KISALTMA = {"prof", "doç", "dr", "sn", "av", "bkz", "vb", "vs", "örn", "yrd", "mah", "cad", "sok", "no", "op", "uzm"}
+
+
+def _kucuk(s: str) -> str:
+    return s.replace("I", "ı").replace("İ", "i").lower()
+
+
+def akici(metin: str) -> str:
+    """Kısa ünlem ya da cümleyi sonrakine virgülle bağlar: "Merhaba! Ben Ayşe." → "Merhaba, ben Ayşe." """
+    def bagla(m: re.Match) -> str:
+        son, isaret, ilk, ikinci = m.group(2), m.group(3), m.group(4), m.group(5)
+        if isaret == "." and (len(son) < 4 or _kucuk(son) in _KISALTMA or any(c.isdigit() for c in m.group(1))):
+            return m.group(0)                  # "Dr. Ahmet", "Madde 3. Sonra" bağlanmaz
+        if not ikinci or ikinci.islower():       # "ABD" gibi kısaltmanın büyük harfi kalır
+            ilk = _kucuk(ilk)
+        return f"{m.group(1)}, {ilk}"
+    for _ in range(3):                         # "Evet! Tamam! Gidelim." birden çok kısa cümle
+        metin, eski = _KISA.sub(bagla, metin), metin
+        if metin == eski:
+            break
+    return metin
+
+
 def _cumleler(metin: str) -> list[str]:
+    metin = akici(" ".join(metin.split()))
     try:
         from turkce_duygu import cumlelere_bol
         return cumlelere_bol(metin)

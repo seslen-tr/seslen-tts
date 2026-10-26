@@ -61,12 +61,12 @@ Windows'ta enerji kısıtını kaldırma `SESLEN_TTS_SUREC=0` ile kapatılır. �
 
 | Ses | Kim | Doğallık (UTMOS) |
 |---|---|---|
-| `ayse` | olgun kadın (~45), orta-kalın, güven veren | 4,04 |
-| `zeynep` | genç kız (~17), ince, canlı | 3,95 |
-| `koca` | iri kalın dev, gürleyen ama sevimli (çizgi karakter) | 3,90 |
-| `fatma` | yaşlı kadın (~70), ince, şefkatli nine | 3,53 |
-| `emre` | genç erkek (~18), orta, enerjik | 2,93 |
-| `hasan` | yaşlı erkek (~72), kalın, bilge dede | 2,78 |
+| `ayse` | olgun kadın (~45), orta-kalın, güven veren | 3,89 |
+| `koca` | iri kalın dev, gürleyen ama sevimli (çizgi karakter) | 3,89 |
+| `hasan` | yaşlı erkek (~72), kalın, bilge dede | 3,26 |
+| `zeynep` | genç kız (~17), ince, canlı | 3,25 |
+| `emre` | genç erkek (~18), orta, enerjik | 2,87 |
+| `fatma` | yaşlı kadın (~70), ince, şefkatli nine | 2,38 |
 
 Örnek sesler: [Hugging Face model sayfası](https://huggingface.co/seslen-tr/seslen-tts/tree/main/ornekler).
 
@@ -103,9 +103,9 @@ Varsayılanlar: ses `zeynep`, ton ve üslup `otomatik`, çıktı `seslen.wav`. `
 
 ## Ölçümler
 
-- **Anlaşılırlık** (Whisper medium, 6 ses × 4 yeni cümle): %100. Whisper sayıları rakamla yazdığı için ("onda" →
-  "10'da") ham ölçüm %93,2 görünür.
-- **Doğallık:** UTMOS 2,8–4,0 (tablo). UTMOS İngilizce dinleyicilerle eğitildi; Türkçe vurguyu yargılayamaz,
+- **Okunuş denetimi** (Türkçe wav2vec2 CTC + sözcük başına GOP, 6 ses × 14 cümle; sayı, saat ve para dahil): 84
+  cümlede 1 sözcük hatası (Hasan: "aradığın" → "aradığım").
+- **Doğallık:** UTMOS 2,4–3,9 (tablo; 6 ses × 14 cümle, paketin kendi yoluyla). UTMOS İngilizce dinleyicilerle eğitildi; Türkçe vurguyu yargılayamaz,
   yapaylığı yakalar.
 - **Hız** (i7-12700H, 6 iş parçacığı): gerçek zaman oranı ≈ 0,2–0,4. Yani 5 saniyelik cümle 1–2 saniyede üretilir.
   Windows'un arka plan süreçlerine uyguladığı enerji kısıtı paket tarafından kapatılır (yoksa 4–5 kat yavaşlıyordu).
@@ -115,7 +115,8 @@ Varsayılanlar: ses `zeynep`, ton ve üslup `otomatik`, çıktı `seslen.wav`. `
 [StyleTTS2](https://github.com/yl4579/StyleTTS2) (iSTFTNet çözücü) öğrenci modeli. Ses ve duygu verisini öğretmen model
 [VoxCPM2](https://huggingface.co/openbmb/VoxCPM2) üretti: sesler tariften tasarlandı, gerçek bir kişinin sesi değildir.
 Eğitim üç aşamalıdır: temel, difüzyon ve çekişmeli ince ayar, son olarak vurgu işaretli okunuş ile
-[Türkçe PL-BERT](https://huggingface.co/seslen-tr/turkce-plbert). Eğitim tek RTX 4090'da yapıldı. Ağlar ONNX'e
+[Türkçe PL-BERT](https://huggingface.co/seslen-tr/turkce-plbert). Eğitim tek RTX 4090'da yapıldı, son ince ayar
+(0.2.0) tek A100'de; bu turda her eğitim kaydı otomatik okunuş denetiminden (Türkçe wav2vec2 CTC) geçti. Ağlar ONNX'e
 aktarıldı; aktarımın sesi değiştirmediği sınandı (log-mel farkı, modelin kendi iki çalıştırması arasındaki farkın altında).
 
 ## Sınırlılıklar

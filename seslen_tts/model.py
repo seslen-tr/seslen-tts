@@ -24,6 +24,7 @@ HF_DEPO = os.environ.get("SESLEN_TTS_HF", "seslen-tr/seslen-tts")
 DOSYALAR = ["metin.onnx", "ses.onnx", "stiller.npz", "sesler.json", "semboller.json"]
 BAS_DOLGU = 4          # baştaki dolgu işaretinin en uzun süresi (25 ms birim); uzarsa model boşluğu sesle dolduruyor
 BIRIM_MS = 25          # bir süre birimi = 2 mel çerçevesi = 600 örnek
+NOKTALI_MS = 200       # noktalı virgülde en az duraklama (yoksa virgülden ayırt edilmiyor)
 # SORU EZGİSİ: evet/hayır sorusunda ezginin tepesi soru ekinden (mı/mi/mu/mü + kişi ekleri) önceki sözcüğün vurgulu
 # hecesindedir ("yardımcı olaBİLİR misin?", "ANkara mı?"; Göksel & Kerslake §21.2). Model bunu düz geçtiği için o
 # heceye bu kadar yarım ton eklenir (ses.onnx içinde ~175 ms ile yumuşatılır). Soru sözcüklü sorulara dokunmaz.
@@ -120,7 +121,8 @@ class SesModeli:
         self.stiller = {a: v[a].astype(np.float32) for a in v.files}
         self.sesler: dict = json.loads((k / "sesler.json").read_text(encoding="utf-8"))
         self.semboller: dict = json.loads((k / "semboller.json").read_text(encoding="utf-8"))
-        self._virgul = {self.semboller[c] for c in ",;" if c in self.semboller}
+        self._virgul = {self.semboller[c] for c in "," if c in self.semboller}
+        self._noktali = {self.semboller[c] for c in ";" if c in self.semboller}
 
     def okunus(self, metin: str) -> str:
         from turkce_vurgu import g2p
@@ -144,10 +146,11 @@ class SesModeli:
         d, t_en, sure = self.metin.run(None, {"tokens": tokens, "stil": stil})
         sure = np.maximum(np.round(sure / hiz), 1).astype(np.int64)
         sure[0] = min(sure[0], BAS_DOLGU)
-        if virgul_ms:
-            for i, k in enumerate(kod, 1):
-                if k in self._virgul:
-                    sure[i] += round(virgul_ms / BIRIM_MS)
+        for i, k in enumerate(kod, 1):
+            if k in self._noktali:
+                sure[i] += round(max(virgul_ms, NOKTALI_MS) / BIRIM_MS)
+            elif virgul_ms and k in self._virgul:
+                sure[i] += round(virgul_ms / BIRIM_MS)
         g = {"d": d, "t_en": t_en, "hiza": hizala(sure), "s": stil[:, 128:], "ref": stil[:, :128],
              "perde": np.array([perde], np.float32), "tonlama": np.array([tonlama], np.float32), "egri": egri}
         return self.ses.run(None, g)[0][..., :-50].reshape(-1)       # sondaki tık

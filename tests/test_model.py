@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from seslen_tts.model import SORU_TEPE, hizala, soru_egrisi
-from seslen_tts.seslen import _cumleler
+from seslen_tts.seslen import _cumleler, akici
 
 
 class _Hepsi(dict):
@@ -41,7 +41,16 @@ def test_hizala():
 
 
 def test_cumleler():
-    assert _cumleler("Merhaba! Nasılsın? İyiyim.") == ["Merhaba!", "Nasılsın?", "İyiyim."]
+    assert _cumleler("Merhaba! Nasılsın? İyiyim.") == ["Merhaba, nasılsın?", "İyiyim."]
+    assert _cumleler("Bugün hava güzel. Yarın yağmur var.") == ["Bugün hava güzel.", "Yarın yağmur var."]
+
+
+def test_akici():
+    assert akici("Dikkat! Bu işlem geri alınamaz.") == "Dikkat, bu işlem geri alınamaz."
+    assert akici("Evet! Tamam! Gidelim.") == "Evet, tamam, gidelim."
+    assert akici("Dr. Ahmet geldi.") == "Dr. Ahmet geldi."               # kısaltma
+    assert akici("Madde 3. Sonra bakarız.") == "Madde 3. Sonra bakarız."  # sayı
+    assert akici("Tamam! ABD'ye gidiyoruz.") == "Tamam, ABD'ye gidiyoruz."
 
 
 @pytest.mark.skipif(not os.environ.get("SESLEN_TTS_MODEL"), reason="model yok (SESLEN_TTS_MODEL)")
@@ -49,6 +58,6 @@ def test_seslendirme():
     from seslen_tts import ORAN, Seslen
     s = Seslen()
     assert "notr" in s.tonlar("zeynep")
-    parcalar = list(s.seslendir("Merhaba. Yarın gelecek misiniz?", ses="zeynep", ton="notr"))
+    parcalar = list(s.seslendir("Bugün hava güzel. Yarın gelecek misiniz?", ses="zeynep", ton="notr"))
     assert len(parcalar) == 2
     assert all(0.4 < len(p.ses) / ORAN < 5 and np.isfinite(p.ses).all() for p in parcalar)
