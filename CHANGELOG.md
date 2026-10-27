@@ -1,5 +1,11 @@
 # Değişiklikler
 
+## 0.2.1 — kısa cümle
+
+- Tek başına 1-2 sözcüklük cümle ("Evet.", "Eyvah!", "dedi.") arkasına taşıyıcı cümle eklenerek üretilir, ses son
+  harfte kesilir: model sona uydurma hece ekliyordu ("evetnı", "dikkatsınız"). 6 ses × 15 kısa cümlede takılan 0.
+- Yabancı adlar turkce-normalize 0.1.3 ile Türkçe okunuşla okunur ("Michael Jackson" → Maykıl Ceksın).
+
 ## 0.2.0 — yeni model
 
 - Model yenilendi (Seslen t10): sesler yeni öğretmen verisiyle ince ayarlandı; her eğitim kaydı otomatik okunuş

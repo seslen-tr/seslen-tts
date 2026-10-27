@@ -61,3 +61,13 @@ def test_seslendirme():
     parcalar = list(s.seslendir("Bugün hava güzel. Yarın gelecek misiniz?", ses="zeynep", ton="notr"))
     assert len(parcalar) == 2
     assert all(0.4 < len(p.ses) / ORAN < 5 and np.isfinite(p.ses).all() for p in parcalar)
+
+
+@pytest.mark.skipif(not os.environ.get("SESLEN_TTS_MODEL"), reason="model yok (SESLEN_TTS_MODEL)")
+def test_kisa_cumle_tasiyicisiz_uzunlukta():
+    from seslen_tts import ORAN, Seslen
+    s = Seslen()
+    assert s.model._kisa_bitis("Evet.") > 0 and s.model._kisa_bitis("Evet?") == 0
+    assert s.model._kisa_bitis("Bugün hava çok güzel.") == 0
+    w = s.model.konus("Evet.", s.model.stil("zeynep"))
+    assert 0.2 < len(w) / ORAN < 1.2                      # taşıyıcı cümle kesildi

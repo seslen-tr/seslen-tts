@@ -24,7 +24,12 @@ HF_DEPO = os.environ.get("SESLEN_TTS_HF", "seslen-tr/seslen-tts")
 DOSYALAR = ["metin.onnx", "ses.onnx", "stiller.npz", "sesler.json", "semboller.json"]
 BAS_DOLGU = 4          # baştaki dolgu işaretinin en uzun süresi (25 ms birim); uzarsa model boşluğu sesle dolduruyor
 BIRIM_MS = 25          # bir süre birimi = 2 mel çerçevesi = 600 örnek
+ORNEK_BIRIM = 600
 NOKTALI_MS = 200       # noktalı virgülde en az duraklama (yoksa virgülden ayırt edilmiyor)
+# KISA CÜMLE: tek başına 1-2 sözcüklük cümleye model sonda uydurma hece ekliyor ("Evet." → "evetnı"). Arkasına taşıyıcı
+# cümle eklenip üretilir, ses hizalamadan bilinen son harfte kesilir (16 ses × 19 kısa cümlede takılan 51 → 8).
+KISA_SOZCUK = 2
+TASIYICI = " Bunu sana daha önce de söylemiştim."
 # SORU EZGİSİ: evet/hayır sorusunda ezginin tepesi soru ekinden (mı/mi/mu/mü + kişi ekleri) önceki sözcüğün vurgulu
 # hecesindedir ("yardımcı olaBİLİR misin?", "ANkara mı?"; Göksel & Kerslake §21.2). Model bunu düz geçtiği için o
 # heceye bu kadar yarım ton eklenir (ses.onnx içinde ~175 ms ile yumuşatılır). Soru sözcüklü sorulara dokunmaz.
@@ -138,7 +143,8 @@ class SesModeli:
               virgul_ms: int = 0) -> np.ndarray:
         """Tek cümle → 24 kHz dalga (float32). hiz > 1 hızlı; perde: F0 çarpanı; tonlama: perde dalgalanması
         çarpanı (1 doğal); virgul_ms: virgül ve noktalı virgülde ek duraklama."""
-        okunus = self.okunus(metin)
+        bitis = self._kisa_bitis(metin)
+        okunus = self.okunus(metin + TASIYICI if bitis else metin)
         kod = [self.semboller[c] for c in okunus if c in self.semboller]
         tokens = np.array([[0, *kod, 0]], np.int64)
         egri = np.concatenate([[0], soru_egrisi(okunus, self.semboller), [0]]).astype(np.float32)[None]
@@ -153,4 +159,24 @@ class SesModeli:
                 sure[i] += round(virgul_ms / BIRIM_MS)
         g = {"d": d, "t_en": t_en, "hiza": hizala(sure), "s": stil[:, 128:], "ref": stil[:, :128],
              "perde": np.array([perde], np.float32), "tonlama": np.array([tonlama], np.float32), "egri": egri}
-        return self.ses.run(None, g)[0][..., :-50].reshape(-1)       # sondaki tık
+        w = self.ses.run(None, g)[0][..., :-50].reshape(-1)       # sondaki tık
+        if bitis:
+            w = w[:(int(sure[:bitis + 1].sum()) + 1) * ORNEK_BIRIM].copy()     # son harften sonra 25 ms
+            n = min(len(w), ORNEK_BIRIM)
+            w[-n:] *= np.linspace(1, 0, n, dtype=w.dtype)                  # 25 ms sönüm
+        return w
+
+    def _kisa_bitis(self, metin: str) -> int:
+        """Kısa cümlede (soru değil) son harfin işaret sırası (baştaki dolgu 0), değilse 0. Bkz. KISA_SOZCUK."""
+        metin = metin.strip()
+        if len(metin.split()) > KISA_SOZCUK or not metin.endswith((".", "!")):
+            return 0
+        kod = [self.semboller[c] for c in self.okunus(metin) if c in self.semboller]
+        uzun = [self.semboller[c] for c in self.okunus(metin + TASIYICI) if c in self.semboller]
+        if uzun[:len(kod)] != kod:
+            return 0                                  # okunuş taşıyıcıyla değişiyorsa kesim yeri bilinmez
+        nokta = {self.semboller[c] for c in ".!…," if c in self.semboller}
+        son = len(kod)
+        while son > 1 and kod[son - 1] in nokta:
+            son -= 1
+        return son
