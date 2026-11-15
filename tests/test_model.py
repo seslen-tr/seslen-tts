@@ -67,6 +67,18 @@ def test_belge_bolumleri():
     assert ("a: Doğruluk, %81,2.", True) in b
 
 
+def test_harfsiz_parca_okunmaz():
+    b = _bolumler('Ses yükseliyor ("yardımcı olabilir misin?"). Sonraki cümle.')
+    assert all(any(ch.isalnum() for ch in c) for c, _ in b) and b[-1][1]
+
+
+def test_paragraf_perdesi():
+    from seslen_tts.seslen import PARAGRAF_ALT, PARAGRAF_UST, paragraf_perdesi
+    assert paragraf_perdesi(0, 1) == 0
+    assert paragraf_perdesi(0, 5) == PARAGRAF_UST and paragraf_perdesi(4, 5) == PARAGRAF_ALT
+    assert paragraf_perdesi(0, 2) == PARAGRAF_UST / 2 and paragraf_perdesi(1, 2) == PARAGRAF_ALT / 2
+
+
 def test_uzun_cumle_bolunur():
     uzun = "Bu çok uzun bir cümle, " * 20 + "bitti."
     assert all(len(c) <= UZUN_CUMLE for c, _ in _bolumler(uzun))

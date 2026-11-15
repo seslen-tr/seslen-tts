@@ -36,6 +36,8 @@ seslen-tts -d makale.md -s nehir --denetim -o makale.wav      # Markdown dosyas�
   bilgi metninde duygu sabit ve hafif kalır; uzun cümle bölünür; her cümle sesin doğal hızında okunur (model uzun
   cümleyi hızlandırıyordu); virgül ve noktada hep durulur. Teknik yazımlar Türkçe okunur: "LLM" → elelem, "EVREN"
   sözcük gibi, "Sentinel-2", "v0.2.1", "Qwen2.5", "10 m", "24 kHz", "fine-tuning".
+- **Paragraf ezgisi:** perde paragrafın başında yüksek başlar, sonuna doğru iner, yeni paragrafta yeniden yükselir;
+  uzun metin tekdüze gelmez (`seslendir(paragraf_ezgisi=False)` ya da `--paragraf-ezgisiz` ile kapanır).
 - **Özdenetim:** her cümle Türkçe bir tanıyıcıyla dinlenir; bir sözcük bozuk okunduysa yeniden, onarılarak
   üretilir (sözcüğü yavaşlatma, ünlüyü uzatma, vurguyu kaldırma…). PyTorch gerekmez; tanıyıcı isteğe bağlıdır
   (`Seslen(denetim=True)` ya da `--denetim`, ilk kullanımda ~360 MB iner).

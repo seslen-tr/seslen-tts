@@ -27,6 +27,8 @@ def main() -> int:
     ap.add_argument("--denetim", action="store_true",
                     help="özdenetim: her cümle dinlenir, bozuk sözcük onarılır (tanıyıcı yoksa ~360 MB iner)")
     ap.add_argument("--denetimsiz", action="store_true", help="özdenetimi kapat")
+    ap.add_argument("--paragraf-ezgisiz", action="store_true",
+                    help="paragraf ezgisini kapat (her cümle aynı perde düzeyinde)")
     a = ap.parse_args()
     s = Seslen(denetim=False if a.denetimsiz else (True if a.denetim else None))
     if a.sesler:
@@ -39,7 +41,8 @@ def main() -> int:
     else:
         metin = a.metin or sys.stdin.read()
     t0 = time.perf_counter()
-    dalga = s.tum(metin, ses=a.ses, ton=a.ton, uslup=a.uslup, hiz=a.hiz, perde=a.perde)
+    dalga = s.tum(metin, ses=a.ses, ton=a.ton, uslup=a.uslup, hiz=a.hiz, perde=a.perde,
+                  paragraf_ezgisi=not a.paragraf_ezgisiz)
     wav_yaz(a.cikti, dalga)
     sure = len(dalga) / ORAN
     print(f"{a.cikti}: {sure:.1f} sn ses, {time.perf_counter() - t0:.1f} sn'de", file=sys.stderr)

@@ -36,6 +36,12 @@ PARCA_MS = 175                  # parça sonundaki virgül dalgada kesilir (mode
 CUMLE_MS = 450                  # cümle sonunda en az (haber üslubu 350 ms idi; kulak: "noktadan sonra bekleme yok";
                                 # 03.11'den beri noktanın kendi süresi kesildiği için 400 → 450)
 BELGE_KISA = 4                  # belgede bundan az sözcüklü cümle (başlık, madde) nötr okunur
+# PARAGRAF EZGİSİ: okurken perde düzeyi paragrafın başında yüksek başlar, paragraf ilerledikçe iner, yeni paragrafta
+# yeniden yükselir. Model her cümleyi aynı düzeyde okuduğu için uzun metin tekdüze geliyordu (öğretmen verisi cümle
+# cümle üretildiği için bunu öğretemez). İlk cümle PARAGRAF_UST, son cümle PARAGRAF_ALT yarım ton (arası doğrusal);
+# iki cümlelik paragrafta aralığın yarısı; tek cümlelik paragrafa (başlık, madde) dokunulmaz. Alt sınır 0: perde
+# bugünkünden aşağı inmez (−1,0'a inen biçimde iki makalede takılan 4 → 7 cümle oldu; 0'da 4, ezgisiz hâlle aynı).
+PARAGRAF_UST, PARAGRAF_ALT = 1.5, 0.0
 #: Sesin doğal hızını ölçen orta uzunlukta, düz cümleler (bkz. Seslen.dogal_hiz).
 AYAR_CUMLELERI = (
     "Bugün hava oldukça güzel ve güneşli görünüyor.",
@@ -103,12 +109,22 @@ def _bolumler(metin: str) -> list[tuple[str, bool]]:
     cikti = []
     for p in paragraflar(metin):
         cumleler = [q for c in _bol(p) for q in uzun_cumleyi_bol(c, UZUN_CUMLE)]
+        # harfsiz parça okunmaz: '(… misin?").' bölününce kalan "." model 0,4 sn uydurma ses üretiyordu (14.11.2026)
+        cumleler = [c for c in cumleler if any(ch.isalnum() for ch in c)]
         cikti += [(c, i == len(cumleler) - 1) for i, c in enumerate(cumleler)]
     return cikti
 
 
 def _cumleler(metin: str) -> list[str]:
     return [c for c, _ in _bolumler(metin)]
+
+
+def paragraf_perdesi(sira: int, n: int) -> float:
+    """Paragrafın sira'ncı cümlesinin (0'dan) perde kayması, yarım ton (bkz. PARAGRAF_UST)."""
+    if n < 2:
+        return 0.0
+    k = min(1.0, (n - 1) / 2)
+    return k * (PARAGRAF_UST + (PARAGRAF_ALT - PARAGRAF_UST) * sira / (n - 1))
 
 
 def _belge_tonu(ton: str, yogunluk: float) -> tuple[str, float]:
@@ -190,8 +206,10 @@ class Seslen:
         return [(r.stil, float(r.yogunluk)) for r in sonuc]
 
     def seslendir(self, metin: str, ses: str = "zeynep", ton: str = "otomatik", yogunluk: float | None = None,
-                  hiz: float | None = None, perde: float = 1.0, uslup: str = "otomatik") -> Iterator[Parca]:
-        """Cümle cümle Parca üretir: ilk cümle hazır olur olmaz çalınabilir."""
+                  hiz: float | None = None, perde: float = 1.0, uslup: str = "otomatik",
+                  paragraf_ezgisi: bool = True) -> Iterator[Parca]:
+        """Cümle cümle Parca üretir: ilk cümle hazır olur olmaz çalınabilir. paragraf_ezgisi: perde düzeyi paragrafın
+        başında yüksek, sonuna doğru alçak (bkz. PARAGRAF_UST); False: her cümle aynı düzeyde."""
         if ses not in self.model.sesler:
             raise ValueError(f"bilinmeyen ses: {ses}; sesler: {', '.join(self.model.sesler)}")
         if ton != "otomatik" and ton not in self.tonlar(ses):
@@ -216,12 +234,20 @@ class Seslen:
                     k = min(k, BELGE_YOGUNLUK)
                 s = notr + k * (s - notr)
             stiller.append((t, s))
-        for (c, son), (t, s), (_, y) in zip(bolumler, stiller, secim):
-            ayar = {"perde": perde, "tonlama": ok["tonlama"], "virgul_ms": ok["virgul_ms"],
+        sira, uzunluk, i = [], [], 0                   # cümlenin paragraftaki sırası ve paragrafın cümle sayısı
+        for j, (_, son) in enumerate(bolumler):
+            sira.append(j - i)
+            if son:
+                uzunluk += [j - i + 1] * (j - i + 1)
+                i = j + 1
+        uzunluk += [len(bolumler) - i] * (len(bolumler) - i)
+        for (c, son), (t, s), (_, y), sr, n in zip(bolumler, stiller, secim, sira, uzunluk):
+            kayma = paragraf_perdesi(sr, n) if paragraf_ezgisi else 0.0
+            ayar = {"perde": perde * 2 ** (kayma / 12), "tonlama": ok["tonlama"], "virgul_ms": ok["virgul_ms"],
                     "hedef_hece": self.dogal_hiz(ses, t) * ok["hiz"]}
             parcalar = _virgulden_bol(c)                 # uzun cümle virgülden: model uzunda sesleri kaydırıyor
             for j, p in enumerate(parcalar):
-                bilgi = {"uslup": uslup_ad, "yogunluk": round(y, 2), "belge": belge}
+                bilgi = {"uslup": uslup_ad, "yogunluk": round(y, 2), "belge": belge, "paragraf_perde": round(kayma, 2)}
                 if self._oz is not None:
                     w, bilgi["denetim"] = self._oz.uret(p, s, notr=notr, hiz=ok["hiz"], **ayar)
                 else:

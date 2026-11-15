@@ -1,5 +1,15 @@
 # Değişiklikler
 
+## 0.3.2 — paragraf ezgisi
+
+- **Paragraf ezgisi:** perde düzeyi paragrafın ilk cümlesinde +1,5 yarım ton başlar, son cümlesinde bugünkü düzeye (0) iner, yeni
+  paragrafta yeniden yükselir (iki cümlelik paragrafta yarısı; başlık ve madde gibi tek cümlelik paragrafa
+  dokunulmaz). Model her cümleyi aynı düzeyde okuyordu, uzun metin tekdüze geliyordu. Perde hiçbir cümlede
+  aşağı inmez: −1'e inen biçimde okunuş denetiminde takılan cümle arttı (iki makalede 4 → 7), bu biçimde artmadı. `seslendir(paragraf_ezgisi=False)`
+  ya da `--paragraf-ezgisiz` ile kapanır; `Parca.bilgi["paragraf_perde"]` cümlenin kaymasını verir.
+- Harf ya da rakam içermeyen parça okunmaz: '(… misin?").' bölününce kalan "." için model 0,4 sn uydurma ses
+  üretiyordu.
+
 ## 0.3.1 — duraklamada çift başlangıç
 
 - Cümle içi duraklamanın sessizliği noktalamanın başına (önceki sözcüğün bitişine) eklenir. Noktalamanın içine
