@@ -1,5 +1,13 @@
 # Değişiklikler
 
+## 0.3.3 — cümle başında "s" → "z"
+
+- Cümle sürtünmeli ötümsüz ünsüzle (s, ş, f, h) başlayınca model baştaki dolguda ve ünsüzün altında ötümlü mırıltı
+  (80-500 Hz) üretiyordu: "Su" → "zu", "Sınıf" → "zenef", "Süt" → "züt". Dalganın başından ilk ünlüye dek 1 kHz altı
+  süzülür (`model.bas_mirilti`). 6 ses × 24 cümlede (önünde 150 ms sessizlikle) tanıyıcının "z" duyduğu 20 → 3, ilk
+  sözcüğü doğru duyduğu 94 → 110 / 144; altı makalede okunuş denetiminde takılan 15 → 9. Dolguyu kısaltmak yetmedi
+  (2 birimde 14 "z", 1 birimde sözcük başı kırpılıyor); patlamalılarda (k, t, p) süzgeç kazanç getirmedi.
+
 ## 0.3.2 — paragraf ezgisi
 
 - **Paragraf ezgisi:** perde düzeyi paragrafın ilk cümlesinde +1,5 yarım ton başlar, son cümlesinde bugünkü düzeye (0) iner, yeni

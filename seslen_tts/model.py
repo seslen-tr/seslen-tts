@@ -55,6 +55,12 @@ HARF_ADLARI = ("a", "be", "ce", "çe", "de", "e", "fe", "ge", "he", "ı", "i", "
                "pe", "re", "se", "şe", "te", "u", "ü", "ve", "ye", "ze", "kü", "iks")
 HARF_SOZCUK = ("a", "de", "e", "ne", "o", "ye", "be", "ı", "i", "u", "ü", "ö")   # kendisi de sözcük olanlar
 HARF_KAT, HARF_ARA_KAT = 1.3, 2.0
+# BAŞTAKİ MIRILTI (17.11.2026): cümle ötümsüz ünsüzle başlayınca model baştaki dolguda ve ünsüzün altında ötümlü
+# mırıltı (80-500 Hz) üretiyor: "Su" → "zu", "Sınıf" → "zenef", "Süt" → "züt". Dolgu uzadıkça artıyor (6 ses × 24
+# cümle, önünde 150 ms sessizlikle CTC: dolgu 6'da ~35, 4'te 20, 2'de 14 "z"; 1'de baş kırpılıyor). Baştan ilk
+# ünlüye dek MIRILTI_HZ altını süzmek: ilk sözcük doğru 94 → 110 / 144, s → z 20 → 3; altı makalede takılan 15 → 11.
+# Yalnız sürtünmeliler: patlamalıda (k, t, p) kazanç yoktu, "panel" → "fanal" oldu.
+OTUMSUZ_BAS, MIRILTI_HZ = set("sʃfh"), 1000
 HIZ_BANDI = 0.07
 HIZ_EN_COK = 1.35
 HIZ_EN_AZ_HECE = 6
@@ -216,6 +222,33 @@ def sessizlik_ekle(w: np.ndarray, sure: np.ndarray, duraklar: list[tuple[int, in
     return np.concatenate(parca + [w[bas:]]) if parca else w
 
 
+def bas_mirilti(w: np.ndarray, okunus: str) -> np.ndarray:
+    """Cümle ötümsüz ünsüzle (OTUMSUZ_BAS) başlıyorsa dalganın başından ilk ünlüye dek MIRILTI_HZ altı süzülür.
+    Ünlü başı: ilk 400 ms'de 80-500 Hz enerjisinin oradaki tepesinin 8 dB altına ilk çıktığı yer. Süzülen bölüm
+    ünlünün başında ~15 ms içinde asıl dalgaya geri karışır. Bkz. OTUMSUZ_BAS."""
+    ilk = next((c for c in okunus if c.isalpha() and c not in "ˈː"), "")
+    if ilk not in OTUMSUZ_BAS or len(w) < 2 * ORNEK_BIRIM:
+        return w
+    pen, f = 300, np.fft.rfftfreq(1024, 1 / ORAN)
+    bant = (f >= 80) & (f < 500)
+    alcak = np.array([10 * np.log10((np.abs(np.fft.rfft(w[i:i + 2 * pen] * np.hanning(2 * pen), 1024)) ** 2)[bant]
+                                    .sum() + 1e-12) for i in range(0, min(len(w) - 2 * pen, 32 * pen) + 1, pen)])
+    v = int(np.argmax(alcak > alcak.max() - 8)) * pen
+    if v <= 0:
+        return w
+    n = min(len(w), v + 2 * GECIS)
+    x = np.asarray(w[:n], np.float64)
+    fx = np.fft.rfftfreq(3 * n, 1 / ORAN)                  # iki yanı sıfırla: dairesel sızıntı olmasın
+    maske = 0.5 - 0.5 * np.cos(np.pi * np.clip((fx - (MIRILTI_HZ - 200)) / 400, 0, 1))    # 800-1200 Hz geçiş
+    yuksek = np.fft.irfft(np.fft.rfft(np.concatenate([np.zeros(n), x, np.zeros(n)])) * maske, 3 * n)[n:2 * n]
+    karis = np.ones(n)
+    a = max(0, v - GECIS)
+    karis[a:] = np.linspace(1, 0, n - a)
+    w = np.array(w, dtype=np.float32)
+    w[:n] = (karis * yuksek + (1 - karis) * x).astype(np.float32)
+    return w
+
+
 def hizala(sure: np.ndarray) -> np.ndarray:
     """İşaret başına süre (birim) → hizalama matrisi (1, L, F): her işaret kendi süresi kadar çerçeveye yayılır."""
     return np.repeat(np.eye(len(sure), dtype=np.float32), sure, axis=1)[None]
@@ -315,7 +348,7 @@ class SesModeli:
         sure, duraklar = duraklari_ayir(sure, kod, durak)
         g = {"d": d, "t_en": t_en, "hiza": hizala(sure), "s": stil[:, 128:], "ref": stil[:, :128],
              "perde": np.array([perde], np.float32), "tonlama": np.array([tonlama], np.float32), "egri": egri}
-        w = self.ses.run(None, g)[0][..., :-50].reshape(-1)       # sondaki tık
+        w = bas_mirilti(self.ses.run(None, g)[0][..., :-50].reshape(-1), okunus)     # sondaki tık; baştaki "z"
         # kısa cümlede taşıyıcıdan önce son harften 25 ms sonra, başka cümlede SON_PAY birim sonra kesilir
         return sessizlik_ekle(w, sure, duraklar, bitis or self._son_harf(kod), 1 if bitis else SON_PAY)
 
