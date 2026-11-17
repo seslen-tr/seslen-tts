@@ -1,5 +1,12 @@
 # Değişiklikler
 
+## 0.3.6 — turkce-vurgu tabanı 0.1.5
+
+- turkce-vurgu ≥ 0.1.5 ister; `pip install -U seslen-tts` ile şunlar da gelir: kökten sonrası baştan sona ek olmalı
+  ("Hatay'da" → "ˈhatajda", önceden "hataːjda"; "kilisede" → "ciˈlisede"), büyük harfli sıradan sözcük özel ad
+  vurgusu almaz ("Bugün Pazar" → "paˈzar", başlıktaki "Madde", "Komut"), cümle başındaki yabancı yer adı özel ad
+  ("Rusya ile" → "ˈrusja").
+
 ## 0.3.5 — boş metin ve hatalı ayar
 
 - Harf ya da rakam içermeyen metin ("...", "😀", "") çökmüyor: `tum` boş dalga döner, `wav_yaz` boş dalgayı yazar
