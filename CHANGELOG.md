@@ -1,5 +1,14 @@
 # Değişiklikler
 
+## 0.3.4 — bağımlılık tabanı
+
+- turkce-normalize ≥ 0.1.7, turkce-vurgu ≥ 0.1.3 ister. Önceki taban (0.1.4 / 0.1.2) `pip install -U seslen-tts`
+  ile eski metin hazırlamayı bırakıyordu; şimdi yükseltmede şunlar da gelir: bitişik kısaltma ("TBMM'de" →
+  "tebememede"), alan adı ("github.com" → "githab nokta kom"), "saat"siz noktalı saat ("06.45'te" → "altı kırk
+  beşte"), baştaki sıfır ("TR-042"), "dört" yumuşaması ("4'e" → "dörde"), ekli Roma rakamı ("Bölüm III'te" → "Bölüm
+  üçte", "Louis XIV'ün" → "Lui on dördüncünün"), g / mg / ml.
+- CITATION.cff sürümü güncellendi (0.2.1'de kalmıştı).
+
 ## 0.3.3 — cümle başında "s" → "z"
 
 - Cümle sürtünmeli ötümsüz ünsüzle (s, ş, f, h) başlayınca model baştaki dolguda ve ünsüzün altında ötümlü mırıltı
