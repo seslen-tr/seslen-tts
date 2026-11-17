@@ -1,5 +1,14 @@
 # Değişiklikler
 
+## 0.3.5 — boş metin ve hatalı ayar
+
+- Harf ya da rakam içermeyen metin ("...", "😀", "") çökmüyor: `tum` boş dalga döner, `wav_yaz` boş dalgayı yazar
+  (önceden "zero-size array" hatası), komut satırı "okunacak metin yok" der ve dosya yazmaz.
+- Komut satırında `""` verilince standart girdi beklenmez (önceden takılıyordu); metin yoksa ve standart girdi bir
+  uçbirimse açık hata.
+- Bilinmeyen üslup, ses, ton ve okunamayan dosya Python izi yerine kısa hata verir; `hiz` / `perde` sıfır ya da eksi
+  ise ValueError (önceden `hiz=0` sessizce yok sayılıyordu).
+
 ## 0.3.4 — bağımlılık tabanı
 
 - turkce-normalize ≥ 0.1.7, turkce-vurgu ≥ 0.1.3 ister. Önceki taban (0.1.4 / 0.1.2) `pip install -U seslen-tts`

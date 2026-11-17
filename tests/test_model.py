@@ -162,3 +162,28 @@ def test_ozdenetim():
     assert s.denetim
     p = list(s.seslendir("Bugün hava çok güzel, parka gidelim mi?", ses="zeynep", ton="notr"))
     assert p and "ceza" in p[0].bilgi["denetim"]
+
+
+def test_bos_dalga_yazilir(tmp_path):
+    # okunacak harf yoksa dalga boş; wav_yaz önceden "zero-size array" ile çöküyordu
+    from seslen_tts import wav_yaz
+    wav_yaz(tmp_path / "bos.wav", np.zeros(0, np.float32))
+    assert (tmp_path / "bos.wav").stat().st_size > 0
+
+
+@pytest.mark.skipif(not os.environ.get("SESLEN_TTS_MODEL"), reason="model yok (SESLEN_TTS_MODEL)")
+def test_gecersiz_ayar_ve_bos_metin():
+    from seslen_tts import Seslen
+    s = Seslen(denetim=False)
+    for ayar in ({"hiz": 0}, {"hiz": -1}, {"perde": 0}, {"ses": "yok"}):
+        with pytest.raises(ValueError):
+            s.tum("Merhaba.", **ayar)
+    try:
+        import turkce_uslup  # noqa: F401
+    except ImportError:
+        pass
+    else:
+        with pytest.raises(ValueError):
+            s.tum("Merhaba.", uslup="yok")
+    for metin in ("", "...", "😀"):
+        assert s.tum(metin).size == 0

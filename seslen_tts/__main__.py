@@ -30,6 +30,8 @@ def main() -> int:
     ap.add_argument("--paragraf-ezgisiz", action="store_true",
                     help="paragraf ezgisini kapat (her cümle aynı perde düzeyinde)")
     a = ap.parse_args()
+    if a.hiz is not None and a.hiz <= 0 or a.perde <= 0:
+        ap.error("--hiz ve --perde sıfırdan büyük olmalı")
     s = Seslen(denetim=False if a.denetimsiz else (True if a.denetim else None))
     if a.sesler:
         for ad, b in s.sesler.items():
@@ -37,12 +39,25 @@ def main() -> int:
         return 0
     if a.dosya:
         from pathlib import Path
-        metin = Path(a.dosya).read_text(encoding="utf-8")
+        try:
+            metin = Path(a.dosya).read_text(encoding="utf-8")
+        except OSError as h:
+            ap.error(f"dosya okunamadı: {h}")
+    elif a.metin is not None:          # "" verilince standart girdi beklenmez (önceden takılıyordu)
+        metin = a.metin
+    elif sys.stdin.isatty():
+        ap.error("okunacak metin yok: metni argüman olarak, -d ile dosyadan ya da standart girdiden verin")
     else:
-        metin = a.metin or sys.stdin.read()
+        metin = sys.stdin.read()
     t0 = time.perf_counter()
-    dalga = s.tum(metin, ses=a.ses, ton=a.ton, uslup=a.uslup, hiz=a.hiz, perde=a.perde,
-                  paragraf_ezgisi=not a.paragraf_ezgisiz)
+    try:
+        dalga = s.tum(metin, ses=a.ses, ton=a.ton, uslup=a.uslup, hiz=a.hiz, perde=a.perde,
+                      paragraf_ezgisi=not a.paragraf_ezgisiz)
+    except ValueError as h:            # bilinmeyen ses / ton / üslup
+        ap.error(str(h))
+    if not dalga.size:
+        print("okunacak metin yok (harf ya da rakam bulunamadı); dosya yazılmadı", file=sys.stderr)
+        return 1
     wav_yaz(a.cikti, dalga)
     sure = len(dalga) / ORAN
     print(f"{a.cikti}: {sure:.1f} sn ses, {time.perf_counter() - t0:.1f} sn'de", file=sys.stderr)

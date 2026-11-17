@@ -187,9 +187,12 @@ class Seslen:
             from turkce_uslup import okuma_ayari
             from turkce_uslup import uslup as uslup_bul
         except ImportError:
-            return "duz", {**varsayilan, **({"hiz": hiz} if hiz else {})}
+            return "duz", {**varsayilan, **({"hiz": hiz} if hiz is not None else {})}
+        from turkce_uslup import USLUPLAR
+        if uslup != "otomatik" and uslup not in USLUPLAR:
+            raise ValueError(f"bilinmeyen üslup: {uslup}; üsluplar: otomatik, {', '.join(USLUPLAR)}")
         ad = uslup_bul(metin[:4000]).uslup if uslup == "otomatik" else uslup
-        a = okuma_ayari(ad, **({"hiz": hiz} if hiz else {}))
+        a = okuma_ayari(ad, **({"hiz": hiz} if hiz is not None else {}))
         return ad, {"hiz": a.hiz, "tonlama": a.tonlama, "duraklama_ms": a.duraklama_ms, "virgul_ms": a.virgul_ms}
 
     def _tonlar(self, ses: str, cumleler: list[str]) -> list[tuple[str, float]]:
@@ -214,6 +217,8 @@ class Seslen:
             raise ValueError(f"bilinmeyen ses: {ses}; sesler: {', '.join(self.model.sesler)}")
         if ton != "otomatik" and ton not in self.tonlar(ses):
             raise ValueError(f"{ses} için ton yok: {ton}; tonlar: {', '.join(self.tonlar(ses))}")
+        if (hiz is not None and hiz <= 0) or perde <= 0:     # 0 önceden sessizce yok sayılıyordu ("if hiz")
+            raise ValueError(f"hız ve perde sıfırdan büyük olmalı (hiz={hiz}, perde={perde})")
         bolumler = _bolumler(metin)
         cumleler = [c for c, _ in bolumler]
         uslup_ad, ok = self._okuma(" ".join(cumleler), uslup, hiz)
@@ -272,7 +277,8 @@ class Seslen:
 def wav_yaz(yol, dalga: np.ndarray, oran: int = ORAN) -> None:
     """16 bit tek kanal WAV (yalnız standart kütüphane)."""
     import wave
-    x = np.clip(dalga / max(1e-6, float(np.abs(dalga).max())) * 0.9, -1, 1)
+    tepe = float(np.abs(dalga).max()) if dalga.size else 0.0    # okunacak harf yoksa dalga boş
+    x = np.clip(dalga / max(1e-6, tepe) * 0.9, -1, 1)
     with wave.open(str(yol), "wb") as w:
         w.setnchannels(1)
         w.setsampwidth(2)
