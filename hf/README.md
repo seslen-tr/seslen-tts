@@ -18,6 +18,10 @@ from seslen_tts import Seslen, wav_yaz
 wav_yaz("merhaba.wav", Seslen().tum("Merhaba! Yarın bize gelecek misiniz?", ses="zeynep"))
 ```
 
+Ağırlıklar 0.3.0'dan beri aynı; 0.3.1–0.3.5 paket kodunda (metin hazırlama, ezgi, duraklama, özdenetim):
+[CHANGELOG](https://github.com/seslen-tr/seslen-tts/blob/main/CHANGELOG.md). Güncel okunuş için
+`pip install -U seslen-tts` (≥ 0.3.5; turkce-normalize ≥ 0.1.7 ve turkce-vurgu ≥ 0.1.4 kendiliğinden gelir).
+
 ## Dinleyin
 
 Her cümlenin duygusu ayrı seçildi. Metin olduğu gibi verildi: saat, sayı ve kısaltmalar paketin içinde okunur hâle gelir.
@@ -145,6 +149,27 @@ Duygular: nötr, neşeli, heyecan, uyarı, merak, özür, üzgün, kızgın, fı
 
 - Okunuş denetimi (Türkçe wav2vec2 CTC, 16 ses × 14 cümle): 224 cümlede 6 sözcük hatası; dördü aynı ünlü ("başvurunuzu" → "başvurunuzı").
 - Hız (i7-12700H, 6 iş parçacığı): gerçek zaman oranı ≈ 0,2–0,4.
+
+## Değerlendirme ve arenalar
+
+Seslen TTS, [Turkish TTS Arena](https://huggingface.co/spaces/EmreAkgul/turkish-tts-arena)'da yer alıyor
+(örnekler: [turkish-tts-arena-v1 / seslen-tts](https://huggingface.co/datasets/EmreAkgul/turkish-tts-arena-v1/viewer/seslen-tts)).
+Karşılaştırma için önerilen ayar: güncel paket, yetişkin bir ses (`ayse`, en yüksek UTMOS; arenada da bu ses
+kullanıldı) ve otomatik ton ile üslup:
+
+```bash
+pip install -U "seslen-tts[hepsi]"
+python -m seslen_tts "Toplantı yarın saat 14.30'da, Bölüm III'te anlatılan plan üzerinde." -s ayse -o ornek.wav
+```
+
+`[hepsi]` cümleye göre ton (turkce-duygu) ve metne göre üslubu (turkce-uslup) açar; onsuz her cümle nötr okunur.
+
+## Stüdyo
+
+Bütün ayarlarıyla yerel stüdyo: [github.com/seslen-tr/seslen](https://github.com/seslen-tr/seslen).
+16 ses × 9 duygu; metin içi işaretler (`[üzgün]`, `[duraklama 1.5]`, `[yavaş]`…); hız, perde, tonlama ve
+duraklama ince ayarı; telaffuz sözlüğü; özdenetim (her cümle Türkçe tanıyıcıyla dinlenip onarılır); yazılı
+tariften yeni ses (öğretmen modelle). OpenAI ses ucu biçiminde HTTP arayüzü de var.
 
 ## Eğitim
 
