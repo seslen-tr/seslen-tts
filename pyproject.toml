@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "seslen-tts"
-version = "0.3.7"
+version = "0.3.8"
 description = "İşlemcide çalışan, duygulu, vurguyu bilen açık Türkçe ses modeli (TTS): PyTorch'suz, yalnız ONNX Runtime"
 readme = "README.md"
 license = "MIT"
@@ -23,7 +23,7 @@ dependencies = [
     "onnxruntime>=1.16",
     "huggingface_hub>=0.20",
     "turkce-vurgu[tam]>=0.1.5",         # tire, biçim işaretleri
-    "turkce-normalize>=0.1.8",          # belge okuyucu, teknik yazımlar
+    "turkce-normalize>=0.1.9",          # belge okuyucu, teknik yazımlar
 ]
 
 [project.optional-dependencies]

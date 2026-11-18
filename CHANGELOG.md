@@ -1,5 +1,10 @@
 # Değişiklikler
 
+## 0.3.8 — turkce-normalize tabanı 0.1.9
+
+- turkce-normalize ≥ 0.1.9 ister; döviz okunur: "100 $" → "yüz dolar" (önceden simge okunmuyordu), "$100'den" →
+  "yüz dolardan", "25 €" → "yirmi beş avro", "€25'e" → "yirmi beş avroya", "10,5 GBP" → "on sterlin elli peni".
+
 ## 0.3.7 — turkce-normalize tabanı 0.1.8
 
 - turkce-normalize ≥ 0.1.8 ister; noktalı kuruş doğru okunur: "2450.75 TL" → "iki bin dört yüz elli lira yetmiş beş
