@@ -1,5 +1,11 @@
 # Değişiklikler
 
+## 0.3.10 — turkce-uslup tabanı 0.1.1
+
+- `[uslup]` ve `[hepsi]` ekleri turkce-uslup ≥ 0.1.1 ister: tekerlemesiz masal ("… yaşarmış. Bir gün … gitmiş")
+  masal (önceden talimat), "-ıyoruz"lu tarif talimat (önceden deneme), "Sevgili dinleyiciler" hitabı sohbet, boş
+  metin bilgi okunur.
+
 ## 0.3.9 — turkce-vurgu tabanı 0.1.6
 
 - turkce-vurgu ≥ 0.1.6 ister; şapkasız yazılan alıntı şapkalı gibi okunur: "hikaye" → "hicaːje" (önceden "hikaje"),
