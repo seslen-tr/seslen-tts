@@ -1,5 +1,11 @@
 # Değişiklikler
 
+## 0.3.7 — turkce-normalize tabanı 0.1.8
+
+- turkce-normalize ≥ 0.1.8 ister; noktalı kuruş doğru okunur: "2450.75 TL" → "iki bin dört yüz elli lira yetmiş beş
+  kuruş" (önceden "iki yüz kırk beş bin yetmiş beş lira"), "1,5 TL" → "bir lira elli kuruş", "0.99 TL" → "doksan
+  dokuz kuruş".
+
 ## 0.3.6 — turkce-vurgu tabanı 0.1.5
 
 - turkce-vurgu ≥ 0.1.5 ister; `pip install -U seslen-tts` ile şunlar da gelir: kökten sonrası baştan sona ek olmalı
