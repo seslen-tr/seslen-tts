@@ -1,5 +1,11 @@
 # Değişiklikler
 
+## 0.3.9 — turkce-vurgu tabanı 0.1.6
+
+- turkce-vurgu ≥ 0.1.6 ister; şapkasız yazılan alıntı şapkalı gibi okunur: "hikaye" → "hicaːje" (önceden "hikaje"),
+  "dükkan", "rüzgar", "mekan", "imkan", "dahil" → "daːhil"; ek ünlüsü ince alıntıda l incedir: "gol" → "ɡol",
+  "petrol", "kalp", "plan".
+
 ## 0.3.8 — turkce-normalize tabanı 0.1.9
 
 - turkce-normalize ≥ 0.1.9 ister; döviz okunur: "100 $" → "yüz dolar" (önceden simge okunmuyordu), "$100'den" →
