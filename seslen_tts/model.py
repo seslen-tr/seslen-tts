@@ -88,6 +88,30 @@ def model_klasoru(klasor: str | Path | None = None) -> Path:
                             f"ile klasör gösterilmedi. Gereken dosyalar: {', '.join(DOSYALAR)}")
 
 
+def ses_listesi(klasor: str | Path | None = None) -> dict:
+    """Sesler ve tonları (sesler.json), modeli açmadan: önce klasör / SESLEN_TTS_MODEL, yoksa Hugging Face'ten yalnız
+    bu dosya (önbellekteyse ağsız). 19.11.2026: `--sesler` liste için iki ONNX ağını yüklüyordu (~11 sn)."""
+    adaylar = [Path(klasor)] if klasor else []
+    if os.environ.get("SESLEN_TTS_MODEL"):
+        adaylar.append(Path(os.environ["SESLEN_TTS_MODEL"]))
+    yol = next((a / "sesler.json" for a in adaylar if (a / "sesler.json").exists()), None)
+    if yol is None and os.environ.get("SESLEN_TTS_INDIRME") != "0":
+        try:
+            from huggingface_hub import hf_hub_download
+        except ImportError:
+            hf_hub_download = None
+        for yerel in ((True, False) if hf_hub_download else ()):   # önce önbellek: model indiyse ağa çıkılmaz
+            try:
+                yol = Path(hf_hub_download(HF_DEPO, "sesler.json", local_files_only=yerel))
+                break
+            except Exception:
+                pass
+    if yol is None:
+        raise FileNotFoundError(f"sesler.json bulunamadı: Hugging Face'ten ({HF_DEPO}) indirilemedi ve "
+                                f"SESLEN_TTS_MODEL ile klasör gösterilmedi")
+    return json.loads(yol.read_text(encoding="utf-8"))
+
+
 def soru_egrisi(okunus: str, sozluk: dict) -> np.ndarray:
     """Okunuşun modele giren her işaretine yarım ton eki: soru ekinden önceki sözcüğün vurgulu hecesine SORU_TEPE,
     gerisine 0. Uzunluk, sözlükte olan karakter sayısıdır (olmayanlar işarete çevrilmez)."""

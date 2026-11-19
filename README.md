@@ -108,7 +108,7 @@ s.tum(metin, ses="zeynep", ton="neseli", yogunluk=0.6)   # duygu şiddeti (0-1, 
 ```
 
 - `ton`: `"otomatik"` ya da `notr`, `neseli`, `heyecan`, `uyari`, `merak`, `ozur`, `uzgun`, `kizgin`, `fisilti`
-  (`seslen_tts.TONLAR`). Bir sesin tonları: `s.tonlar("zeynep")`; sesler ve açıklamaları: `s.sesler`.
+  (`seslen_tts.TONLAR`). Bir sesin tonları: `s.tonlar("zeynep")`; sesler ve açıklamaları: `s.sesler`; modeli açmadan: `seslen_tts.ses_listesi()`.
 - `uslup`: `"otomatik"` ya da `haber`, `bilgi`, `talimat`, `deneme`, `anlati`, `masal`, `sohbet`. Üslup hızı,
   ezgi genişliğini ve duraklamaları belirler; `hiz` verilirse üslubun hızını ezer.
 - turkce-duygu kurulu değilse her cümle nötr, turkce-uslup kurulu değilse üslup düz okunur.
@@ -120,7 +120,7 @@ Alt düzey: `s.model.konus(cumle, s.model.stil("ayse", "merak"))` tek cümleyi s
 
 ```
 seslen-tts "metin" [-s SES] [-t TON] [-u USLUP] [--hiz 1.1] [--perde 1.0] [-o cikti.wav]
-seslen-tts --sesler                  # sesleri ve tonlarını listele
+seslen-tts --sesler                  # sesleri ve tonlarını listele (model açılmaz, ~1 sn)
 echo "Merhaba!" | seslen-tts -o merhaba.wav     # metin verilmezse standart girdiden
 ```
 

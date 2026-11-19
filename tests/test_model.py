@@ -164,6 +164,22 @@ def test_ozdenetim():
     assert p and "ceza" in p[0].bilgi["denetim"]
 
 
+def test_ses_listesi_modelsiz(tmp_path, monkeypatch):
+    # 19.11.2026: --sesler liste için iki ONNX ağını yüklüyordu; artık yalnız sesler.json okunur
+    import json
+    from seslen_tts import ses_listesi
+    (tmp_path / "sesler.json").write_text(json.dumps({"nehir": {"gorunen": "Nehir", "aciklama": "a",
+                                                                "tonlar": ["notr"]}}), encoding="utf-8")
+    monkeypatch.setenv("SESLEN_TTS_INDIRME", "0")
+    monkeypatch.delenv("SESLEN_TTS_MODEL", raising=False)
+    assert list(ses_listesi(tmp_path)) == ["nehir"]            # metin.onnx / ses.onnx yokken de
+    monkeypatch.setenv("SESLEN_TTS_MODEL", str(tmp_path))
+    assert ses_listesi()["nehir"]["tonlar"] == ["notr"]
+    monkeypatch.delenv("SESLEN_TTS_MODEL")
+    with pytest.raises(FileNotFoundError):                    # indirme kapalı, klasör yok
+        ses_listesi(tmp_path / "yok")
+
+
 def test_bos_dalga_yazilir(tmp_path):
     # okunacak harf yoksa dalga boş; wav_yaz önceden "zero-size array" ile çöküyordu
     from seslen_tts import wav_yaz

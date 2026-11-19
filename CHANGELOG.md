@@ -1,5 +1,10 @@
 # Değişiklikler
 
+## 0.3.12 — sesler modelsiz listelenir
+
+- `seslen-tts --sesler` modeli açmaz, yalnız `sesler.json`'u okur: ~11 sn → ~1 sn. Model inmemişse yalnız bu küçük
+  dosya iner; önbellekte varsa ağa çıkılmaz. Kütüphaneden aynısı: `seslen_tts.ses_listesi()`.
+
 ## 0.3.11 — turkce-duygu tabanı 0.1.3
 
 - `[duygu]` ve `[hepsi]` ekleri turkce-duygu ≥ 0.1.3 ister: "Bırakın beni!" kızgın (önceden neşeli), "Sessiz ol,

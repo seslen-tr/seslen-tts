@@ -8,7 +8,7 @@ import argparse
 import sys
 import time
 
-from . import ORAN, Seslen, wav_yaz
+from . import ORAN, Seslen, ses_listesi, wav_yaz
 
 
 def main() -> int:
@@ -32,11 +32,16 @@ def main() -> int:
     a = ap.parse_args()
     if a.hiz is not None and a.hiz <= 0 or a.perde <= 0:
         ap.error("--hiz ve --perde sıfırdan büyük olmalı")
-    s = Seslen(denetim=False if a.denetimsiz else (True if a.denetim else None))
-    if a.sesler:
-        for ad, b in s.sesler.items():
+    if a.sesler:                       # model açılmaz: yalnız sesler.json (önceden ~11 sn, iki ONNX ağı yükleniyordu)
+        try:
+            liste = ses_listesi()
+        except FileNotFoundError as h:
+            print(h, file=sys.stderr)
+            return 1
+        for ad, b in liste.items():
             print(f"{ad:8s} {b['gorunen']:8s} {b['aciklama']}  [{', '.join(b['tonlar'])}]")
         return 0
+    s = Seslen(denetim=False if a.denetimsiz else (True if a.denetim else None))
     if a.dosya:
         from pathlib import Path
         try:
