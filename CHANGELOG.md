@@ -1,5 +1,11 @@
 # Değişiklikler
 
+## 0.3.11 — turkce-duygu tabanı 0.1.3
+
+- `[duygu]` ve `[hepsi]` ekleri turkce-duygu ≥ 0.1.3 ister: "Bırakın beni!" kızgın (önceden neşeli), "Sessiz ol,
+  bebek uyuyor." fısıltı (önceden kızgın), "Lütfen gitme." üzgün, "Lütfen kapıyı kapatmayı unutma." nötr (ikisi de
+  önceden uyarı), "Yaşasın, kazandık!" neşeli (önceden uyarı), iki noktayla biten liste girişi nötr.
+
 ## 0.3.10 — turkce-uslup tabanı 0.1.1
 
 - `[uslup]` ve `[hepsi]` ekleri turkce-uslup ≥ 0.1.1 ister: tekerlemesiz masal ("… yaşarmış. Bir gün … gitmiş")
