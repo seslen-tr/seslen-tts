@@ -19,6 +19,11 @@ from pathlib import Path
 
 import numpy as np
 
+# Windows'ta (geliştirici kipi kapalıyken) Hugging Face önbelleği sembolik bağlantı kuramayınca model ilk inişte
+# 3 satırlık uyarı basıyordu; önbellek yine çalışır, kullanıcının yapacağı bir şey yok (20.11.2026). Kullanıcı
+# değişkeni kendisi verdiyse dokunulmaz.
+os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+
 ORAN = 24000
 HF_DEPO = os.environ.get("SESLEN_TTS_HF", "seslen-tr/seslen-tts")
 DOSYALAR = ["metin.onnx", "ses.onnx", "stiller.npz", "sesler.json", "semboller.json"]

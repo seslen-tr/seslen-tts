@@ -1,5 +1,13 @@
 # Değişiklikler
 
+## 0.3.13 — TDK okunuşu, milattan önce
+
+- Taban: turkce-vurgu 0.1.7 (okunuş sözlüğü TDK telaffuzuyla düzeltildi: acemice, palyaço kısa; eflatun, latife ince
+  l; hayalî, tedavi, telafi son ünlü uzun; ünlüyle başlayan ekte kök uzar: icadı, ilanı, padişahı) ve
+  turkce-normalize 0.1.10 (M.Ö. / M.S. → milattan önce / sonra).
+- Windows'ta model ilk kez inerken Hugging Face'in 3 satırlık sembolik bağlantı uyarısı basılmaz (önbellek yine
+  çalışır; `HF_HUB_DISABLE_SYMLINKS_WARNING` kullanıcı verdiyse ona dokunulmaz).
+
 ## 0.3.12 — sesler modelsiz listelenir
 
 - `seslen-tts --sesler` modeli açmaz, yalnız `sesler.json`'u okur: ~11 sn → ~1 sn. Model inmemişse yalnız bu küçük
