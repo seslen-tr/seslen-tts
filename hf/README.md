@@ -18,9 +18,9 @@ from seslen_tts import Seslen, wav_yaz
 wav_yaz("merhaba.wav", Seslen().tum("Merhaba! Yarın bize gelecek misiniz?", ses="zeynep"))
 ```
 
-Ağırlıklar 0.3.0'dan beri aynı; 0.3.1–0.3.13 paket kodunda (metin hazırlama, ezgi, duraklama, özdenetim):
+Ağırlıklar 0.3.0'dan beri aynı; 0.3.1–0.3.14 paket kodunda (metin hazırlama, ezgi, duraklama, özdenetim):
 [CHANGELOG](https://github.com/seslen-tr/seslen-tts/blob/main/CHANGELOG.md). Güncel okunuş için
-`pip install -U seslen-tts` (≥ 0.3.13; turkce-normalize ≥ 0.1.10 ve turkce-vurgu ≥ 0.1.7 kendiliğinden gelir).
+`pip install -U seslen-tts` (≥ 0.3.14; turkce-normalize ≥ 0.1.10 ve turkce-vurgu ≥ 0.1.8 kendiliğinden gelir).
 
 ## Dinleyin
 

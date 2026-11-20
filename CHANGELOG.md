@@ -1,5 +1,11 @@
 # Değişiklikler
 
+## 0.3.14 — TDK okunuşunun tamamı
+
+- Taban: turkce-vurgu 0.1.8. TDK taraması tamamlandı: ekte uzayan kök 51 → 117 ("ihtimali", "iptali", "kabulü",
+  "evladım", "istiklali"); "kâhin", "lades" uzun, "klimatoloji" ince l. Şapkalı yazım sözlüğe uyar: "istiklâl"in
+  sonundaki l artık ince, "ilân" → TDK'daki gibi ilk hecesi uzun.
+
 ## 0.3.13 — TDK okunuşu, milattan önce
 
 - Taban: turkce-vurgu 0.1.7 (okunuş sözlüğü TDK telaffuzuyla düzeltildi: acemice, palyaço kısa; eflatun, latife ince
