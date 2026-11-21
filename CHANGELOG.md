@@ -1,5 +1,11 @@
 # Değişiklikler
 
+## 0.3.15 — ahlaki, hayali
+
+- Taban: turkce-vurgu 0.1.9. "ahlaki" TDK'daki gibi ince l ve uzun ünlülerle okunur (önceden "ahɫaci"; ayrıca
+  adilane, hayalet, kefalet, meşguliyet); şapkasız "hayali" bağlama göre iyelik ("onun en büyük hayali") ya da
+  sıfat ("hayali bir hikâye") okunur.
+
 ## 0.3.14 — TDK okunuşunun tamamı
 
 - Taban: turkce-vurgu 0.1.8. TDK taraması tamamlandı: ekte uzayan kök 51 → 117 ("ihtimali", "iptali", "kabulü",
