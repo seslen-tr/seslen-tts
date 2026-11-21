@@ -1,5 +1,12 @@
 # Değişiklikler
 
+## 0.3.16 — ondalık, saat aralığı, kod, T.C.
+
+- Taban: turkce-normalize 0.1.11. COSMOS Speech Benchmark yöntemiyle (Whisper large-v3 hakem) ölçümde çıkan okuma
+  hataları: "999,90 liralık" artık "virgül doksan" (önceden "virgül dokuz"); "13.30 ile 17.00" saat okunur (önceden
+  "on üç virgül üç…"); "Doğrulama kodunuz 668866" rakam rakam; "T.C. kimlik" bölünmez ve "tece" okunur (önceden "T."
+  ayrı cümleydi); "SMS" → "esemes". Bu ölçümde en yüksek doğallık Ayşe sesinde, nötr tonda: UTMOS 3,9–4,0.
+
 ## 0.3.15 — ahlaki, hayali
 
 - Taban: turkce-vurgu 0.1.9. "ahlaki" TDK'daki gibi ince l ve uzun ünlülerle okunur (önceden "ahɫaci"; ayrıca
